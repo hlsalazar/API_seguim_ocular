@@ -1,0 +1,25 @@
+pipeline{
+    agent any
+    enviroment{
+        CI = 'true'
+        FIREBASE_DEPLOY_TOKEN = credentials('firebase-deploy-token')
+    }
+    stages{
+        stage ('Build'){
+            step{
+                echo "Construcción de la aplicación"
+            }
+        }
+        stage('Tests'){
+            step{
+                sh './jenkins/scripts/test.sh'
+                input message: 'Finished using Test version of the web app? (Click "Proceed" to continue)'
+            }
+        }
+        stage('Production'){
+            step{
+                sh './jenkins/scripts/production.sh'
+            }
+        }
+    }
+}

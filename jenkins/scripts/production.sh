@@ -1,0 +1,1 @@
+firebase deploy -P production --token "$FIREBASE_DEPLOY_TOKEN"
