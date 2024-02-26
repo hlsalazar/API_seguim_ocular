@@ -1,1 +1,1 @@
-firebase deploy -P production --token "$FIREBASE_DEPLOY_TOKEN"
+firebase deploy -P espe-eyetracker --token "$FIREBASE_DEPLOY_TOKEN"
