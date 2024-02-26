@@ -3,6 +3,8 @@ pipeline {
     environment {
         CI = 'true'
         FIREBASE_DEPLOY_TOKEN = credentials('firebase-deploy-token')
+        FIREBASE_PROJECT_ID_TEST = 'espe-eyetracker-test'
+        FIREBASE_PROJECT_ID_PROD = 'espe-eyetracker'
     }
     stages {
         stage('Build') {
@@ -12,14 +14,20 @@ pipeline {
         }
         stage('Tests') {
             steps {
-                sh './jenkins/scripts/test.sh'
+                deployToFirebase('test')
                 input message: 'Finished using Test version of the web app? (Click "Proceed" to continue)'
             }
         }
         stage('Production') {
             steps {
-                sh './jenkins/scripts/production.sh'
+                deployToFirebase('production')
             }
         }
     }
+}
+
+def deployToFirebase(env) {
+    def projectId = (env == 'test') ? FIREBASE_PROJECT_ID_TEST : FIREBASE_PROJECT_ID_PROD
+    sh "firebase use --add ${projectId}"
+    sh "firebase deploy -P ${env} --token \"$FIREBASE_DEPLOY_TOKEN\""
 }
