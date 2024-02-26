@@ -1,0 +1,330 @@
+<!DOCTYPE HTML >
+<html>
+   <head>
+      <!--API-->
+      <script src="https://api.gazerecorder.com/GazeCloudAPI.js" ></script>
+	   <script src="https://app.gazerecorder.com/GazeRecorderAPI.js"></script>
+	   <script src="https://app.gazerecorder.com/GazePlayer.js"></script>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+      <title>ESPE-EyeTracker</title>
+
+  
+
+  <link rel="stylesheet" href="../assets/css/maicons.css">
+
+  <link rel="stylesheet" href="../assets/css/bootstrap.css">
+
+  <link rel="stylesheet" href="../assets/vendor/owl-carousel/css/owl.carousel.css">
+
+  <link rel="stylesheet" href="../assets/vendor/animate/animate.css">
+
+  <link rel="stylesheet" href="../assets/css/theme.css">
+      <script type = "text/javascript" >
+         //variables globales para el Gaze
+         let x,y,gaze;
+         //variables para cronometro
+         let timer;
+         let hours = 0;
+         let minutes = 0;
+         let seconds = 0;
+
+         //instanciación de variables para el gaze
+         function setVars(GazeData) {
+            
+            x = GazeData.docX;
+            y = GazeData.docY;
+            gaze = document.getElementById("gaze");
+         }
+
+         //Funciones de prueba de calibración   
+         function PlotGaze(GazeData) {
+            //settea los valores de tracking en tiempo real
+            document.getElementById("GazeData").innerHTML = " DirMiradaX: " + GazeData.GazeX + " DirMiradaY: " + GazeData.GazeY;
+            document.getElementById("HeadPhoseData").innerHTML = " Rot/Pos CabezaX: " + GazeData.HeadX + " Rot/Pos CabezaY: " + GazeData.HeadY + " Posición CabezaZ: " + GazeData.HeadZ;
+            document.getElementById("HeadRotData").innerHTML = " Yaw: " + GazeData.HeadYaw + " Pitch: " + GazeData.HeadPitch + " Roll: " + GazeData.HeadRoll;
+            
+            setVars(GazeData);
+            
+            //Anchura interior del elemento
+            x -= gaze.clientWidth/2;
+            //Altura interior del elemento
+            y -= gaze.clientHeight/2;
+            //Setea la posición horizontal mediante la toma de la posición izquierda
+	         gaze.style.left = x + "px";
+            //Setea la posición vertical mediante la toma de la posición superior
+	         gaze.style.top = y + "px";
+            //Muestra o no el cursor de tracking de la mirada según las condiciones en tiempo real
+            if(GazeData.state != 0)
+            {
+               if( gaze.style.display  == 'block')
+                  gaze.style.display = 'none';
+            }
+            else
+            {
+               if( gaze.style.display  == 'none')
+                  gaze.style.display = 'block';
+            }
+         }
+
+         window.addEventListener("load", function() {
+
+            GazeCloudAPI.OnCalibrationComplete =function(){ console.log('Calibración completa')  }
+            GazeCloudAPI.OnCamDenied =  function(){ console.log('No se puede obtener acceso a la cámara')  }
+            GazeCloudAPI.OnError =  function(msg){ console.log('ERROR: ' + msg)  }
+            GazeCloudAPI.UseClickRecalibration = true;
+            GazeCloudAPI.OnResult = PlotGaze; 
+         });
+
+         //Funciones de usabilidad en una web
+         GazeRecorderAPI.OnNavigation = function(url)
+			{
+				document.getElementById("url").value = url;
+			}
+
+			function EndRec()
+			{
+				document.getElementById("inicio").style.display = 'none';
+				GazeRecorderAPI.StopRec();
+				GazeCloudAPI.StopEyeTracking();
+			}
+
+			function PlayRec()
+			{
+				EndRec();
+            stopTimer();
+            console.log(seconds);
+            console.log(minutes);
+            console.log(hours);
+				GazePlayer.SetCountainer(document.getElementById("reproductor"));
+				var SesionReplayData = GazeRecorderAPI.GetRecData();
+				GazePlayer.PlayResultsData(SesionReplayData);
+			}
+
+
+			function start(GazeData)
+			{
+				document.getElementById("inicio").style.display = 'block';
+				var url = document.getElementById("urlstart").value
+				GazeCloudAPI.StartEyeTracking();
+				GazeCloudAPI.OnCalibrationComplete  = function(){
+					GazeRecorderAPI.Rec(url);
+               toggleTimer();
+               resetTimer();
+               startTimer();
+				};
+            
+            setVars(GazeData);
+            //Anchura interior del elemento
+            x -= gaze.clientWidth/2;
+            //Altura interior del elemento
+            y -= gaze.clientHeight/2;
+            //Setea la posición horizontal mediante la toma de la posición izquierda
+	         gaze.style.left = x + "px";
+            //Setea la posición vertical mediante la toma de la posición superior
+	         gaze.style.top = y + "px";
+            //Muestra o no el cursor de tracking de la mirada según las condiciones en tiempo real
+            if(GazeData.state != 0)
+            {
+               if( gaze.style.display  == 'block')
+                  gaze.style.display = 'none';
+            }
+            else
+            {
+               if( gaze.style.display  == 'none')
+                  gaze.style.display = 'block';
+            }
+
+			}
+
+			function Navigate() 
+			{
+				var url = document.getElementById("url").value;
+				GazeRecorderAPI.Navigate (url );
+			}
+
+         //CRONOMETRO
+         function startTimer() {
+                timer = setInterval(() => {
+                    seconds++;
+
+                    if (seconds === 60) {
+                        seconds = 0;
+                        minutes++;
+                    }
+
+                    if (minutes === 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+
+                    document.getElementById("timer").innerHTML = `${hours}:${minutes}:${seconds}`;
+                }, 1000);
+            }
+
+            function stopTimer() {
+                clearInterval(timer);
+            }
+            function resetTimer() {
+                clearInterval(timer);
+                hours = 0;
+                minutes = 0;
+                seconds = 0;
+                document.getElementById("timer").innerHTML = `${hours}:${minutes}:${seconds}`;
+            }
+
+            // Function to toggle the timer display
+            function toggleTimer() {
+                const timerDisplay = document.getElementById("timer-display");
+                if (timerDisplay.style.display === "none") {
+                    timerDisplay.style.display = "block";
+                } else {
+                    timerDisplay.style.display = "none";
+                }
+            }
+     
+      </script>
+   </head>
+   <header>
+    <div class="topbar">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-8 text-sm">
+            <div class="site-info">
+              <a href="#"><span class="mai-mail text-primary"></span> khmina@espe.edu.ec</a>
+              <span class="divider">|</span>
+              <a href="#"><span class="mai-mail text-primary"></span> dvsaa@espe.edu.com</a>
+            </div>
+          </div>
+        </div> <!-- .row -->
+      </div> <!-- .container -->
+    </div> <!-- .topbar -->
+
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+      <div class="container">
+        <a class="navbar-brand" href="index.html"><span class="text-primary">ESPE</span>-EyeTracker</a>
+
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupport" aria-controls="navbarSupport" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupport">
+          <ul class="navbar-nav ml-auto" style="list-style: none;">
+            <li class="nav-item active">
+              <a class="nav-link" href="index.html">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contact.html">Contacto</a>
+            </li>
+          </ul>
+        </div> <!-- .navbar-collapse -->
+      </div> <!-- .container -->
+    </nav>
+  </header>
+   <body>
+      <!--SECCION CRONOMETRO-->
+      <section>
+         <div id="timer-display" style="display: none;">
+            TIEMPO TRANSCURRIDO
+            <p id="timer">0:0:0</p>
+         </div>
+      </section>
+      <!--SECCIÓN DE CALIBRACIÓN-->
+      <section>
+         <div align='center'>
+            <div class="row">
+               <div class="col">
+                  <h1 style="padding: 50px 0 0 0;">ESPE EYE-TRACKER</h1>
+               </div>
+            </div>
+            <!--
+               Los datos de la parametrización del eye tracking se usan mediante parámetros tomados de la mirada
+               - La primera fila de datos hacen referencia a la posición en el plano de los Ojos(mirada) tanto en X e Y para determinar la dirección
+               en la que están encaminados los ojos y determinar el punto de intersección con la pantalla
+               - La siguiente fila muestra la rotación de la cabeza en el plano X e Y a pesar de que la API referencia solo la mirada
+               toma en cuenta la posición de la cabeza en si como influencia en el resultado final de la mirada, de esta manera posiciona
+               en el plano si la cabeza ha rotado mostrando variaciones en la posición X si mira hacia izquierda o derecha (tomando valores
+               máximos cuando gira a la izquierda -los valores tienden de 8 a 8.4 en pruebas- y el valor mínimo cuando gira a la derecha -0-)
+               aunque si la rotación de la cabeza limita la visión de la cámara para detectar la mirada, saltará un error y se desplegará la
+               interfaz de posicionamiento corporal que viene por defecto de la API
+               - La última fila corresponde netamente a valoraciones tomados de razgos faciales en torno a lo mencionado anteriormente, esto
+               es usado en inteligencia artificial para la detección del movimiento del rostro, dicho en términos simples:
+               * YAW: Rotación horizontal de la cabeza (Girar de izq a derecha o al revés)
+               * PITCH: Movimiento vertical de la cabeza (arriba->abajo / abajo->arriba)
+               * ROLL: Movimiento horizontal solamente de la cabeza sin rotarla de izq a derecha o al revés
+               Para mayor entendimiento visitar la imagen detallada en el link de github
+               ( https://github.com/Belkim/EyeTrackerBackendTest ): 
+               https://user-images.githubusercontent.com/40554548/210865707-8d69b3b2-e06c-4809-9817-ddb0c5324a47.png
+            -->
+            
+            <div>
+               <p> 
+               <p id = "GazeData" > </p>
+               <p id = "HeadPhoseData" > </p>
+               <p id = "HeadRotData" > </p>
+               </p>
+            </div>
+            <!--Este div es dinámico, ayuda a determinar el cursor de seguimiento ocular-->
+            <div id ="gaze" style ='position: absolute;display:none;width: 100px;height: 100px;border-radius: 50%;border: solid 2px  rgba(255, 255,255, .2);	box-shadow: 0 0 100px 3px rgba(125, 125,125, .5);	pointer-events: none;	z-index: 999999'></div>
+         </div>
+      </section>
+
+      <br>
+
+      <!--SECCIÓN DE PRUEBA DE USABILIDAD-->
+      <section>
+         <div id = "inicio" style="display:none; position: fixed; top: 0px; left: 0px; opacity: .8; ;margin-left:auto;margin-right:auto; z-index: 90;">
+            Url a visitar:<input type="text" id="url" name="name" required size="50"  value = "https://www.google.com">
+            
+            <button onclick="Navigate();" type="button">
+               Visitar
+            </button>
+
+            <button onclick="PlayRec()"  type="button">
+               Finalizar grabación y ver resultados
+            </button>
+         </div>
+         <div class="container">
+            <div class="row"> 
+               <div class="col d-flex justify-content-center align-items-center">
+                  <h1 style="padding: 0 0 50px 0;" align = 'left'>Test de usabilidad de páginas web</h1>
+                </div>
+               <input type="text" id="urlstart" name="name" required size="50"  value = "https://www.google.com" hidden>
+            </div>
+            <div class="row">
+              <div class="col d-flex justify-content-center align-items-center" style="text-align: center;">
+                 <h2>Toma las siguientes recomendaciones: <br> <br></h2>
+              </div>
+           </div>
+           <div class="row">
+            <div class="col d-flex justify-content-center align-items-center" style="text-align: center;">
+               <h3>Tener sufiente luz <br></h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col d-flex justify-content-center align-items-center" style="text-align: center;">
+               <h3>La configuración de tu web cam en el navegador<br></h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col d-flex justify-content-center align-items-center" style="text-align: center;">
+               <h3>Permitir el acceso a tu webcam al navegador <br><br><br></h3>
+            </div>
+          </div>
+            <div class="row">
+               <div class="col d-flex justify-content-center align-items-center" style="text-align: center;">
+                  <button onclick="start();" type="button" class="btn btn-success">Testear</button>
+               </div>
+            </div>
+         </div>
+         
+         <div id="reproductor" style="background-color: white;position: absolute;top: 50%;left: 50%; margin-right: -50%;transform: translate(-50%, -50%) "></div>
+      </section>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+   </body>
+</html>
+<style>
+  .navbar-nav.ml-auto li {
+    list-style: none;
+}
+</style>
