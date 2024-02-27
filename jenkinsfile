@@ -1,4 +1,9 @@
 pipeline {
+    stage('Instalar Docker') {
+    steps {
+        sh 'apk add --no-cache docker'
+    }
+}
     agent { 
        docker {
            image 'node:latest'
