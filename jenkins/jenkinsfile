@@ -25,9 +25,3 @@ pipeline {
         }
     }
 }
-
-def deployToFirebase(env) {
-    def projectId = (env == 'test') ? FIREBASE_PROJECT_ID_TEST : FIREBASE_PROJECT_ID_PROD
-    sh "firebase use --add ${projectId}"
-    sh "firebase deploy -P ${env} --token \"$FIREBASE_DEPLOY_TOKEN\""
-}
