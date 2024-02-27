@@ -1,21 +1,18 @@
 pipeline {
-    agent any
-
+    agent { 
+       docker {
+           image 'node:8-alpine'
+           args '-p 3000:3000'
+       }
+   }
     environment {
         CI = 'true'
         FIREBASE_DEPLOY_TOKEN = credentials('firebase-deploy-token')
         FIREBASE_PROJECT_ID_TEST = 'espe-eyetracker-test'
         FIREBASE_PROJECT_ID_PROD = 'espe-eyetracker'
     }
-
     stages {
         stage('Build') {
-            agent {
-                docker {
-                    image 'node:8-alpine'
-                    args '-p 3000:3000'
-                }
-            }
             steps {
                 sh 'npm install'
                 sh 'npm install -g firebase-tools'
@@ -23,23 +20,15 @@ pipeline {
                 echo "Construcción de la aplicación"
             }
         }
-
         stage('Tests') {
-            agent any
             steps {
-                script {
-                    deployToFirebase('test')
-                    input message: 'Finished using Test version of the web app? (Click "Proceed" to continue)'
-                }
+                deployToFirebase('test')
+                input message: 'Finished using Test version of the web app? (Click "Proceed" to continue)'
             }
         }
-
         stage('Production') {
-            agent any
             steps {
-                script {
-                    deployToFirebase('production')
-                }
+                deployToFirebase('production')
             }
         }
     }
