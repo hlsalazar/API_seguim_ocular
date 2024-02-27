@@ -1,10 +1,6 @@
 pipeline {
     agent any
     environment {
-        CI = 'true'
-        FIREBASE_DEPLOY_TOKEN = credentials('firebase-deploy-token')
-        FIREBASE_PROJECT_ID_TEST = 'espe-eyetracker-test'
-        FIREBASE_PROJECT_ID_PROD = 'espe-eyetracker'
     }
     stages {
         stage('Build') {
