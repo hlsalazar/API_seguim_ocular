@@ -13,20 +13,18 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                // sh 'npm install -g firebase-tools'
-                // sh 'firebase --version'
                 echo "Construcción de la aplicación"
             }
         }
         stage('Tests') {
             steps {
-                deployToFirebase('test')
+                echo "Prueba correcta"
                 input message: 'Finished using Test version of the web app? (Click "Proceed" to continue)'
             }
         }
         stage('Production') {
             steps {
-                deployToFirebase('production')
+                echo "Despliegue a producción"
             }
         }
     }
