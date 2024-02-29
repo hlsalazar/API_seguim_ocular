@@ -1,20 +1,33 @@
-pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {
+pipeline{
+    agent{ 
+       docker {
+           image 'node:8-alpine'
+           args '-p 3000:3000'
+       }
+   }
+    enviroment{
+        CI = 'true'
+        FIREBASE_DEPLOY_TOKEN = credentials('firebase-deploy-token')
+    }
+    stages{
+        stage ('Build'){
+            step{
+                sh 'npm install -g firebase-tools'
+                sh 'firebase --version'
                 echo "Construcción de la aplicación"
             }
         }
-        stage('Tests') {
-            steps {
-                echo "Prueba correcta"
+        stage('Tests'){
+            step{
+                sh './jenkins/scripts/test.sh'
                 input message: 'Finished using Test version of the web app? (Click "Proceed" to continue)'
             }
         }
-        stage('Production') {
-            steps {
-                echo "Despliegue a producción"
+        stage('Production'){
+            step{
+                sh './jenkins/scripts/production.sh'
+                echo "Despliegue exitoso"
+
             }
         }
     }
