@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisión de Datos</title>
+</head>
+<body>
+    <h1>Revisión de Datos</h1>
+    <pre id="gazeDataDisplay"></pre>
+
+    <script>
+        // Recupera los datos de gazeevents desde localStorage
+        const gazeevents = JSON.parse(localStorage.getItem('gazeevents'));
+
+        // Verifica si los datos se han recuperado correctamente
+        if (gazeevents) {
+            console.log("Gazeevents:", gazeevents);
+            document.getElementById('gazeDataDisplay').textContent = JSON.stringify(gazeevents, null, 2);
+        } else {
+            console.error("No se encontraron datos de gazeevents.");
+            document.getElementById('gazeDataDisplay').textContent = "No se encontraron datos de gazeevents.";
+        }
+    </script>
+</body>
+</html>

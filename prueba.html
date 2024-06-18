@@ -391,7 +391,24 @@
         // Llama a la función para descargar las imágenes
         downloadImagesFromSession(SesionReplayData);
     });
+
+    function redirectToRevision() {
+        if (!SesionReplayData) {
+            alert("No hay datos de sesión disponibles. Por favor, graba una sesión primero.");
+            return;
+        }
+
+        // Guarda los datos de gazeevents en localStorage
+        localStorage.setItem('gazeevents', JSON.stringify(SesionReplayData.gazeevents));
+
+        // Redirige a la nueva página
+        window.location.href = 'revision.html';
+    }
 </script>
+
+
+
+<button onclick="redirectToRevision()">Ir a la página de revisión</button>
 
 <canvas id="gazeCanvas" width="1000" height="1000" style="border:1px solid #000000;"></canvas>
 
