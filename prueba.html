@@ -1,6 +1,15 @@
 <!DOCTYPE HTML >
 <html>
-   <head>
+   <head>    
+      <meta charset="UTF-8">
+
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
+      <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>-->
+
       <!--API-->
       <script src="https://api.gazerecorder.com/GazeCloudAPI.js" ></script>
 	   <script src="https://app.gazerecorder.com/GazeRecorderAPI.js"></script>
@@ -88,6 +97,8 @@
 				GazeCloudAPI.StopEyeTracking();
 			}
 
+         let SesionReplayData;
+
 			function PlayRec()
 			{
 				EndRec();
@@ -96,9 +107,11 @@
             console.log(minutes);
             console.log(hours);
 				GazePlayer.SetCountainer(document.getElementById("reproductor"));
-				var SesionReplayData = GazeRecorderAPI.GetRecData();
+				SesionReplayData = GazeRecorderAPI.GetRecData();
 				GazePlayer.PlayResultsData(SesionReplayData);
 			}
+
+
 
 
 			function start(GazeData)
@@ -320,6 +333,69 @@
          
          <div id="reproductor" style="background-color: white;position: absolute;top: 50%;left: 50%; margin-right: -50%;transform: translate(-50%, -50%) "></div>
       </section>
+
+<!-- Añade este botón dentro de la sección de prueba de usabilidad -->
+<button id="downloadImagesBtn" type="button" class="btn btn-primary">Descargar Imágenes</button>
+
+<script>
+
+    document.getElementById('downloadImagesBtn').addEventListener('click', () => {
+        if (!SesionReplayData) {
+            alert("No hay datos de sesión disponibles. Por favor, graba una sesión primero.");
+            return;
+        }
+
+        function drawGazePoints(gazeEvents) {
+        const canvas = document.getElementById('gazeCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Limpia el canvas antes de dibujar
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Establece un color para los puntos
+        ctx.fillStyle = 'red';
+
+        // Dibuja cada punto en el canvas
+        gazeEvents.forEach(event => {
+            if (event.state === 0) { // Solo dibuja si el estado es válido (0)
+                ctx.beginPath();
+                ctx.arc(event.docX, event.docY, 5, 0, 2 * Math.PI); // Dibuja un punto con radio 5
+                ctx.fill();
+            }
+        });
+    }
+
+        // Function to download images from session data
+        function downloadImagesFromSession(data) {
+         console.log("SesionReplayData:", SesionReplayData); // Imprime el contenido en la consola
+
+            // Esta es una función de marcador de posición. La implementación real depende de cómo se estructuren los datos.
+            // Suponiendo que los datos contienen una matriz de URLs de imágenes.
+
+            // Ejemplo: Datos simulados que contienen URLs de imágenes (reemplazar esto con la lógica de extracción real)
+            const images = data.images || []; // Reemplaza con la lógica de extracción real
+
+            images.forEach((imageURL, index) => {
+                const link = document.createElement('a');
+                link.href = imageURL;
+                link.download = `frame_${index}.jpg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            drawGazePoints(SesionReplayData.gazeevents);
+
+        }
+
+        // Llama a la función para descargar las imágenes
+        downloadImagesFromSession(SesionReplayData);
+    });
+</script>
+
+<canvas id="gazeCanvas" width="1000" height="1000" style="border:1px solid #000000;"></canvas>
+
+
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
    </body>
 </html>
