@@ -15,24 +15,28 @@
             document.getElementById('resultado').innerText = `Resultado: ${suma}`;
         }
 
-        function enviarResultado() {
+        async function enviarResultado() {
             const resultado = resultados[resultados.length - 1];
-            fetch('https://astro-api-to-array.vercel.app', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ resultado })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Resultado enviado:', data);
-                // Redirige a la página Astro con el resultado como parámetro
-                window.location.href = `https://astro-app.vercel.app/result?resultado=${resultado}`;
-            })
-            .catch(error => {
+            try {
+                const response = await fetch('https://astro-api-to-array.vercel.app', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ resultado })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Resultado enviado:', data);
+                    // Redirige a la página Astro con el resultado como parámetro
+                    window.location.href = `https://astro-app.vercel.app/result?resultado=${resultado}`;
+                } else {
+                    console.error('Error al enviar el resultado:', response.statusText);
+                }
+            } catch (error) {
                 console.error('Error al enviar el resultado:', error);
-            });
+            }
         }
     </script>
 </head>
