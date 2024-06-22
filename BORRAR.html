@@ -30,7 +30,7 @@
                     const data = await response.json();
                     console.log('Resultado enviado:', data);
                     // Redirige a la página Astro con el resultado como parámetro
-                    window.location.href = `https://astro-app.vercel.app/result?resultado=${resultado}`;
+                    window.location.href = `https://astro-api-to-array.vercel.app/result?resultado=${resultado}`;
                 } else {
                     console.error('Error al enviar el resultado:', response.statusText);
                 }
