@@ -424,7 +424,7 @@
             .then(response => response.json())
             .then(data => {
                console.log('Success:', data);
-               window.location.href = `https://astro-app-url.vercel.app/?data=${encodedData}`;
+               window.location.href = `https://astro-api-to-array.vercel.app/?data=${encodedData}`;
             })
             .catch((error) => {
                console.error('Error:', error);
