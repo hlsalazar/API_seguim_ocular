@@ -27,6 +27,8 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Resultado enviado:', data);
+                // Redirige a la página Astro con el resultado como parámetro
+                window.location.href = `https://astro-app.vercel.app/result?resultado=${resultado}`;
             })
             .catch(error => {
                 console.error('Error al enviar el resultado:', error);
