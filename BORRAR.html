@@ -24,7 +24,7 @@
                 body: JSON.stringify({ sum })
             });
             const data = await response.json();
-            window.location.href = `https://astro-api-to-array.vercel.app/result?id=${data.id}`;
+            window.location.href = `https://astro-api-to-array.vercel.app/result?sum=${data.sum}`;
         }
     </script>
 </body>
