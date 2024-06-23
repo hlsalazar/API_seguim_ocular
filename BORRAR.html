@@ -11,20 +11,11 @@
     <button onclick="sendSum()">Sum and Send</button>
 
     <script>
-        async function sendSum() {
+        function sendSum() {
             const num1 = parseFloat(document.getElementById('num1').value);
             const num2 = parseFloat(document.getElementById('num2').value);
             const sum = num1 + num2;
-
-            const response = await fetch('https://astro-api-to-array.vercel.app/api/store-sum', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ sum })
-            });
-            const data = await response.json();
-            window.location.href = `https://astro-api-to-array.vercel.app/index?sum=${data.sum}`;
+            window.location.href = `https://astro-api-to-array.vercel.app/?sum=${sum}`;
         }
     </script>
 </body>
