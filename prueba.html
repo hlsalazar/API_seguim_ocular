@@ -411,20 +411,20 @@
          const encodedData = encodeURIComponent(gazeeventsData);
 
          // Redirigir a la nueva página con los datos como parte de la URL
-         window.location.href = `https://astro-api-to-array.vercel.app/?gazeevents=${encodedData}`;
+         //window.location.href = `https://astro-api-to-array.vercel.app/?gazeevents=${encodedData}`;
 
-
-         fetch('/api/endpoint', {
+         fetch('https://astro-api-to-array.vercel.app/api/gazeevents', {
             method: 'POST',
             headers: {
                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ data: encodedData })
+            body: JSON.stringify({ gazeevents: encodedData })
          })
             .then(response => response.json())
             .then(data => {
                console.log('Success:', data);
-               window.location.href = `https://astro-api-to-array.vercel.app/?data=${encodedData}`;
+               // Redirigir a la nueva página para mostrar los datos
+               window.location.href = `https://astro-api-to-array.vercel.app/?gazeevents=${encodedData}`;
             })
             .catch((error) => {
                console.error('Error:', error);
