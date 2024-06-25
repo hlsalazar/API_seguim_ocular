@@ -3,55 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Character</title>
+    <title>Guardar Datos</title>
     <script>
-        function loadCharacter() {
-            const character = {
-                name: "Luke Skywalker",
-                height: "172",
-                mass: "77",
-                hair_color: "blond",
-                skin_color: "fair",
-                eye_color: "blue",
-                birth_year: "19BBY",
-                gender: "male"
-            };
+        function saveData() {
+            const name = document.getElementById('name').value;
+            const surname = document.getElementById('surname').value;
 
-            const characterString = `
-                Name: ${character.name}, 
-                Height: ${character.height}, 
-                Mass: ${character.mass}, 
-                Hair Color: ${character.hair_color}, 
-                Skin Color: ${character.skin_color}, 
-                Eye Color: ${character.eye_color}, 
-                Birth Year: ${character.birth_year}, 
-                Gender: ${character.gender}
-            `;
+            const data = { name, surname };
 
-            // Save character data to localStorage
-            let storedCharacters = JSON.parse(localStorage.getItem('characters')) || [];
-            storedCharacters.push(characterString);
-            localStorage.setItem('characters', JSON.stringify(storedCharacters));
-
-            // Redirect to starwars.com
-            window.location.href = 'https://astro-api-to-array.vercel.app';
-        }
-
-        // Load stored characters on page load
-        window.onload = function() {
-            const storedCharacters = JSON.parse(localStorage.getItem('characters')) || [];
-            const displayArea = document.getElementById('character');
-            storedCharacters.forEach(characterString => {
-                const characterElement = document.createElement('p');
-                characterElement.innerText = characterString;
-                displayArea.appendChild(characterElement);
+            fetch('/saveData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+                alert('Datos guardados');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al guardar los datos');
             });
         }
     </script>
 </head>
 <body>
-    <h1>Star Wars Character</h1>
-    <button onclick="loadCharacter()">Load Character</button>
-    <div id="character"></div>
+    <h1>Guardar Datos</h1>
+    <form onsubmit="event.preventDefault(); saveData();">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name"><br><br>
+        <label for="surname">Apellido:</label>
+        <input type="text" id="surname" name="surname"><br><br>
+        <button type="submit">Guardar</button>
+    </form>
 </body>
 </html>
