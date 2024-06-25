@@ -1,33 +1,22 @@
-import fs from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 
-export default function handler(req, res) {
-    if (req.method === 'POST') {
-        const data = req.body;
-        const filePath = path.join(process.cwd(), 'data.json');
+export default async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-        fs.readFile(filePath, 'utf8', (err, fileData) => {
-            if (err && err.code !== 'ENOENT') {
-                res.status(500).json({ message: 'Error al leer el archivo' });
-                return;
-            }
+  if (req.method === 'POST') {
+    const data = req.body;
+    const jsonFilePath = path.join(process.cwd(), 'data', 'data.json');
 
-            let jsonData = [];
-            if (fileData) {
-                jsonData = JSON.parse(fileData);
-            }
-
-            jsonData.push(data);
-
-            fs.writeFile(filePath, JSON.stringify(jsonData, null, 2), (err) => {
-                if (err) {
-                    res.status(500).json({ message: 'Error al guardar el archivo' });
-                    return;
-                }
-                res.status(200).json({ message: 'Datos guardados' });
-            });
-        });
-    } else {
-        res.status(405).json({ message: 'Method Not Allowed' });
+    try {
+      await fs.writeFile(jsonFilePath, JSON.stringify(data, null, 2));
+      res.status(200).json({ message: 'Data saved successfully' });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to save data' });
     }
-}
+  } else {
+    res.status(405).json({ message: 'Method not allowed' });
+  }
+};

@@ -1,43 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guardar Datos</title>
-    <script>
-        function saveData() {
-            const name = document.getElementById('name').value;
-            const surname = document.getElementById('surname').value;
-
-            const data = { name, surname };
-
-            fetch('/api/saveData', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                console.log('Success:', result);
-                alert('Datos guardados');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al guardar los datos');
-            });
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save JSON</title>
 </head>
 <body>
-    <h1>Guardar Datos</h1>
-    <form onsubmit="event.preventDefault(); saveData();">
-        <label for="name">Nombre:</label>
-        <input type="text" id="name" name="name"><br><br>
-        <label for="surname">Apellido:</label>
-        <input type="text" id="surname" name="surname"><br><br>
-        <button type="submit">Guardar</button>
-    </form>
+  <button id="saveButton">Save Data</button>
+
+  <script>
+    document.getElementById('saveButton').addEventListener('click', () => {
+      const data = {
+        name: 'John Doe',
+        age: 30,
+      };
+
+      fetch('/api/saveData', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
 </body>
 </html>
