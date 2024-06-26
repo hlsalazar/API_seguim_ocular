@@ -1,22 +1,22 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+// api/saveData.js
 
-export default async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+const fs = require('fs');
+const path = require('path');
 
+export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const data = req.body;
-    const jsonFilePath = path.join(process.cwd(), 'data', 'data.json');
+    const { data } = req.body;
+    const filePath = path.join(process.cwd(), 'data', 'data.json');
 
-    try {
-      await fs.writeFile(jsonFilePath, JSON.stringify(data, null, 2));
-      res.status(200).json({ message: 'Data saved successfully' });
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to save data' });
-    }
+    fs.writeFile(filePath, JSON.stringify(data), 'utf8', (err) => {
+      if (err) {
+        console.error('Error writing file:', err);
+        return res.status(500).json({ message: 'Error writing file' });
+      }
+      console.log('File has been saved.');
+      res.status(200).json({ message: 'File has been saved' });
+    });
   } else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-};
+}

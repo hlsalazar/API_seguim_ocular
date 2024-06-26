@@ -398,33 +398,21 @@
             alert("No hay datos de sesión disponibles. Por favor, graba una sesión primero.");
             return;
          }
-         /*
-                 // Guarda los datos de gazeevents en localStorage
-                 localStorage.setItem('gazeevents', JSON.stringify(SesionReplayData.gazeevents));
-         
-                 // Redirige a la nueva página
-                 window.location.href = 'revision.html';
-         
-                 */
+
          // Convertir los datos de gazeevents a una cadena JSON
          const gazeeventsData = JSON.stringify(SesionReplayData.gazeevents);
-         const encodedData = encodeURIComponent(gazeeventsData);
-
-         // Redirigir a la nueva página con los datos como parte de la URL
-         //window.location.href = `https://astro-api-to-array.vercel.app/?gazeevents=${encodedData}`;
-
-         fetch('https://astro-api-to-array.vercel.app/api/gazeevents', {
+         
+         // Enviar los datos al servidor para que sean guardados
+         fetch('/api/saveData', {
             method: 'POST',
             headers: {
                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ gazeevents: encodedData })
+            body: JSON.stringify({ data: gazeeventsData })
          })
             .then(response => response.json())
             .then(data => {
                console.log('Success:', data);
-               // Redirigir a la nueva página para mostrar los datos
-               window.location.href = `https://astro-api-to-array.vercel.app/?gazeevents=${encodedData}`;
             })
             .catch((error) => {
                console.error('Error:', error);
