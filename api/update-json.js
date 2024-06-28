@@ -13,6 +13,10 @@ module.exports = async (req, res) => {
             }
         });
 
+        if (!response.ok) {
+            throw new Error(`GitHub API error (GET): ${response.status} ${response.statusText}`);
+        }
+
         const fileData = await response.json();
 
         // Codificar el nuevo contenido en base64
@@ -35,12 +39,15 @@ module.exports = async (req, res) => {
             body: JSON.stringify(updatePayload)
         });
 
-        if (updateResponse.ok) {
-            res.status(200).json({ message: 'Archivo JSON actualizado con éxito.' });
-        } else {
-            res.status(updateResponse.status).json({ error: updateResponse.statusText });
+        if (!updateResponse.ok) {
+            throw new Error(`GitHub API error (PUT): ${updateResponse.status} ${updateResponse.statusText}`);
         }
+
+        const result = await updateResponse.json();
+
+        res.status(200).json({ message: 'Archivo JSON actualizado con éxito.', result });
     } catch (error) {
-        res.status(500).json({ error: 'Error al actualizar el archivo JSON' });
+        console.error('Error:', error.message);
+        res.status(500).json({ error: error.message });
     }
 };
