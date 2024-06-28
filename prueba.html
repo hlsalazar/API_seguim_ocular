@@ -442,13 +442,13 @@
             ]
          };
 
-         // Enviar los datos al servidor para que sean guardados
-         fetch('/api/saveData', {
+         // Enviar los datos a la función serverless para que sean guardados
+         fetch('/api/update-json', {
             method: 'POST',
             headers: {
                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ data: gazeeventsData })
+            body: JSON.stringify(gazeeventsData)
          })
             .then(response => response.json())
             .then(data => {
@@ -461,6 +461,7 @@
 
       // Asigna la función al evento de clic del botón
       document.getElementById('saveDataBtn').addEventListener('click', redirectToRevisionDOS);
+
 
 
 
