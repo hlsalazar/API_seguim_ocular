@@ -338,8 +338,6 @@
    <!-- Añade este botón dentro de la sección de prueba de usabilidad -->
    <button id="downloadImagesBtn" type="button" class="btn btn-primary">Descargar Imágenes</button>
 
-   <!-- Añade este botón dentro de la sección de prueba de usabilidad -->
-   <button id="insertButton" type="button" class="btn btn-primary">Guardar Datos</button>
 
    <script>
 
@@ -404,10 +402,7 @@
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-analytics.js";
 
       function redirectToRevision() {
-         if (!SesionReplayData) {
-            alert("No hay datos de sesión disponibles. Por favor, graba una sesión primero.");
-            return;
-         }
+
          // Configuración de Firebase
          const firebaseConfig = {
             apiKey: "AIzaSyDXj7QuX8r4aVvRbuOljxrY26kZLpP8KFM",
