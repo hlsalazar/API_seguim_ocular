@@ -339,7 +339,7 @@
    <button id="downloadImagesBtn" type="button" class="btn btn-primary">Descargar Imágenes</button>
 
    <!-- Añade este botón dentro de la sección de prueba de usabilidad -->
-   <button id="saveDataBtn" type="button" class="btn btn-primary">Guardar Datos de Gaze</button>
+   <button id="insertButton" type="button" class="btn btn-primary">Guardar Datos</button>
 
    <script>
 
@@ -395,17 +395,6 @@
          // Llama a la función para descargar las imágenes
          downloadImagesFromSession(SesionReplayData);
       });
-
-      function redirectToRevision() {
-         if (!SesionReplayData) {
-            alert("No hay datos de sesión disponibles. Por favor, graba una sesión primero.");
-            return;
-         }
-
-
-
-      }
-
    </script>
 
    <script type="module">
@@ -414,50 +403,56 @@
       import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-analytics.js";
 
-      // Configuración de Firebase
-      const firebaseConfig = {
-         apiKey: "AIzaSyDXj7QuX8r4aVvRbuOljxrY26kZLpP8KFM",
-         authDomain: "registroocularuso.firebaseapp.com",
-         databaseURL: "https://registroocularuso-default-rtdb.firebaseio.com",
-         projectId: "registroocularuso",
-         storageBucket: "registroocularuso.appspot.com",
-         messagingSenderId: "230219267012",
-         appId: "1:230219267012:web:7b8989887687bc16c78291",
-         measurementId: "G-2FVK8VQHN4"
-      };
 
-      // Inicializar Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-      const database = getDatabase(app);
-
-      // Array de gazeevents (ejemplo)
-      const gazeevents = [
-         { id: 1, event: "event1algo", timestamp: "2024-07-01T12:00:00Z" },
-         { id: 909, event: "event2", timestamp: "2024-07-01T12:05:00Z" },
-         // Agrega más eventos según sea necesario
-      ];
-
-      // Función para insertar el array en Firebase
-      function insertArray() {
-         const dbRef = ref(database, 'gazeevents');
-         set(dbRef, gazeevents)
-            .then(() => {
-               console.log("Array insertado correctamente.");
-            })
-            .catch((error) => {
-               console.error("Error al insertar el array: ", error);
-            });
+      if (!SesionReplayData) {
+         alert("No hay datos de sesión disponibles. Por favor, graba una sesión primero.");
+         return;
       }
 
-      // Asignar el evento click al botón
-      document.getElementById('insertButton').addEventListener('click', insertArray);
+      function redirectToRevision() {
+         // Configuración de Firebase
+         const firebaseConfig = {
+            apiKey: "AIzaSyDXj7QuX8r4aVvRbuOljxrY26kZLpP8KFM",
+            authDomain: "registroocularuso.firebaseapp.com",
+            databaseURL: "https://registroocularuso-default-rtdb.firebaseio.com",
+            projectId: "registroocularuso",
+            storageBucket: "registroocularuso.appspot.com",
+            messagingSenderId: "230219267012",
+            appId: "1:230219267012:web:7b8989887687bc16c78291",
+            measurementId: "G-2FVK8VQHN4"
+         };
+
+         // Inicializar Firebase
+         const app = initializeApp(firebaseConfig);
+         const analytics = getAnalytics(app);
+         const database = getDatabase(app);
+
+         // Array de gazeevents (ejemplo)
+         const gazeevents = [
+            { id: 1, event: "event1algo", timestamp: "2024-07-01T12:00:00Z" },
+            { id: 909, event: "event2333", timestamp: "2024-07-01T12:05:00Z" },
+            // Agrega más eventos según sea necesario
+         ];
+
+         // Función para insertar el array en Firebase
+         function insertArray() {
+            const dbRef = ref(database, 'gazeevents');
+            set(dbRef, gazeevents)
+               .then(() => {
+                  console.log("Array insertado correctamente.");
+               })
+               .catch((error) => {
+                  console.error("Error al insertar el array: ", error);
+               });
+         }
+
+         // Asignar el evento click al botón
+         document.getElementById('insertButton').addEventListener('click', insertArray);
+      }
    </script>
 
-   <button id="insertButton">Insertar Array</button>
 
-
-   <button onclick="redirectToRevision()">Ir a la página de revisión</button>
+   <button type="button" class="btn btn-primary" onclick="redirectToRevision()">Ir a la página de revisión</button>
 
    <canvas id="gazeCanvas" width="1000" height="1000" style="border:1px solid #000000;"></canvas>
 
