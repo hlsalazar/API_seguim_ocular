@@ -189,6 +189,43 @@
       }
 
    </script>
+
+   <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+      import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-analytics.js";
+
+      const firebaseConfig = {
+         apiKey: "AIzaSyDXj7QuX8r4aVvRbuOljxrY26kZLpP8KFM",
+         authDomain: "registroocularuso.firebaseapp.com",
+         databaseURL: "https://registroocularuso-default-rtdb.firebaseio.com",
+         projectId: "registroocularuso",
+         storageBucket: "registroocularuso.appspot.com",
+         messagingSenderId: "230219267012",
+         appId: "1:230219267012:web:7b8989887687bc16c78291",
+         measurementId: "G-2FVK8VQHN4"
+      };
+
+      // Inicializar Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const database = getDatabase(app);
+
+      // Array de gazeevents (ejemplo)
+      const arraycualquiera = [
+         { id: 1, event: "joselo1", timestamp: "2024-07-01T12:00:00Z" },
+         { id: 2, event: "carlos", timestamp: "2024-07-01T12:05:00Z" },
+         // Agrega más eventos según sea necesario
+      ];
+
+      // Hacer que las variables estén disponibles globalmente
+      window.firebaseApp = app;
+      window.firebaseAnalytics = analytics;
+      window.firebaseDatabase = database;
+      window.gazeevents = gazeevents;
+      window.ref = ref;
+      window.set = set;
+   </script>
 </head>
 <header>
    <div class="topbar">
@@ -399,56 +436,98 @@
 
    <script type="module">
       // Importar las funciones necesarias del SDK de Firebase
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+      /*import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
       import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-analytics.js";
+      const firebaseConfig = {
+         apiKey: "AIzaSyDXj7QuX8r4aVvRbuOljxrY26kZLpP8KFM",
+         authDomain: "registroocularuso.firebaseapp.com",
+         databaseURL: "https://registroocularuso-default-rtdb.firebaseio.com",
+         projectId: "registroocularuso",
+         storageBucket: "registroocularuso.appspot.com",
+         messagingSenderId: "230219267012",
+         appId: "1:230219267012:web:7b8989887687bc16c78291",
+         measurementId: "G-2FVK8VQHN4"
+      };
+      // Inicializar Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const database = getDatabase(app);
 
-         function miFuncion() {
-            //valornuevo =valor
-            console.log("tambien entre");
-            // Configuración de Firebase
-            const firebaseConfig = {
-               apiKey: "AIzaSyDXj7QuX8r4aVvRbuOljxrY26kZLpP8KFM",
-               authDomain: "registroocularuso.firebaseapp.com",
-               databaseURL: "https://registroocularuso-default-rtdb.firebaseio.com",
-               projectId: "registroocularuso",
-               storageBucket: "registroocularuso.appspot.com",
-               messagingSenderId: "230219267012",
-               appId: "1:230219267012:web:7b8989887687bc16c78291",
-               measurementId: "G-2FVK8VQHN4"
+      // Array de gazeevents (ejemplo)
+      const gazeevents = [
+         { id: 1, event: "ricardooo", timestamp: "2024-07-01T12:00:00Z" },
+         { id: 2, event: "carlos", timestamp: "2024-07-01T12:05:00Z" },
+         // Agrega más eventos según sea necesario
+      ];*/
+      function miFuncion() {
+         //valornuevo =valor
+         console.log("dormido");
+         // Función para insertar el array en Firebase
+
+         const array_necesito = SesionReplayData.gazeevents
+
+         const arrayGuardar = array_necesito.map(event => {
+            return {
+               x: event.docX,
+               y: event.docY,
+               timestamp: event.time,
+               estado: event.state,
+               duracion: event.duration
             };
-            // Inicializar Firebase
-            const app = initializeApp(firebaseConfig);
-            const analytics = getAnalytics(app);
-            const database = getDatabase(app);
-            
-            // Array de gazeevents (ejemplo)
-            const gazeevents = [
-               { id: 1, event: "ricardo", timestamp: "2024-07-01T12:00:00Z" },
-               { id: 2, event: "pedro", timestamp: "2024-07-01T12:05:00Z" },
-               // Agrega más eventos según sea necesario
-            ];
-            console.log(database)
-            // Función para insertar el array en Firebase
-            function insertArray() {
-               console.log("si entre2")
-               const dbRef = ref(database, 'gazeevents');
-               set(dbRef, gazeevents)
-                  .then(() => {
-                     console.log("si entre 3")
-                     console.log("Array insertado correctamente.");
-                  })
-                  .catch((error) => {
-                     console.error("Error al insertar el array: ", error);
-                  });
-            }
-            insertArray()
+         });
+
+         function insertArray() {
+            console.log("arraynecesito:", arrayGuardar)
+            const dbRef = ref(firebaseDatabase, 'array_necesito');
+            set(dbRef, array_necesito)
+               .then(() => {
+                  console.log("si entre 3")
+                  console.log("Array insertado correctamente.");
+               })
+               .catch((error) => {
+                  console.error("Error al insertar el array: ", error);
+               });
          }
-         miFuncion();
+         insertArray()
 
-         document.getElementById('insertButton').addEventListener('click', miFuncion)
+         /*
+         const arrayPuntos = Datos.gazeevents
 
-      
+         const arrayGuardar = arrayPuntos.map(event => {
+            return {
+               coordenadas: {
+                  x: event.posX,
+                  y: event.posY
+               },
+               tiempo: event.timestamp
+            };
+         });
+
+         console.log("base datos: ", database)
+         console.log("sesion: ", SesionReplayData)
+
+         console.log("arraypuntos es: ", arrayPuntos);
+
+         // Imprime el resultado para verificar
+         console.log("arrayguardar es: ", arrayGuardar);*/
+      }
+
+      function miFuncion2() {
+         console.log("MIRA")
+         console.log("datos mi array", arraycualquiera)
+         //console.log(SesionReplayData.gazeevents)
+
+
+      }
+      document.getElementById('insertButton').addEventListener('click', miFuncion)
+
+      miFuncion();
+
+      miFuncion2()
+
+
+
 
    </script>
 
