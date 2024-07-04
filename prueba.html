@@ -402,70 +402,60 @@
             return;
          }
 
-         // Convertir los datos de gazeevents a una cadena JSON
-         const gazeeventsData = JSON.stringify(SesionReplayData.gazeevents);
 
-         // Enviar los datos al servidor para que sean guardados
-         fetch('/api/saveData', {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ data: gazeeventsData })
-         })
-            .then(response => response.json())
-            .then(data => {
-               console.log('Success:', data);
-            })
-            .catch((error) => {
-               console.error('Error:', error);
-            });
 
       }
-
-      function redirectToRevisionDOS() {
-         const gazeeventsData = {
-            gazeevents: [
-               {
-                  state: 0,
-                  docX: 150,
-                  docY: 200,
-                  GazeX: 150,
-                  GazeY: 200,
-                  HeadX: 0.5,
-                  HeadY: 0.3,
-                  HeadZ: 0.2,
-                  HeadYaw: 0.1,
-                  HeadPitch: 0.05,
-                  HeadRoll: 0.02
-               }
-            ]
-         };
-
-         // Enviar los datos a la función serverless para que sean guardados
-         fetch('/api/update-json', {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(gazeeventsData)
-         })
-            .then(response => response.json())
-            .then(data => {
-               console.log('Success:', data);
-            })
-            .catch((error) => {
-               console.error('Error:', error);
-            });
-      }
-
-      // Asigna la función al evento de clic del botón
-      document.getElementById('saveDataBtn').addEventListener('click', redirectToRevisionDOS);
-
-
-
 
    </script>
+
+   <script type="module">
+      // Importar las funciones necesarias del SDK de Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+      import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-analytics.js";
+
+      // Configuración de Firebase
+      const firebaseConfig = {
+         apiKey: "AIzaSyDXj7QuX8r4aVvRbuOljxrY26kZLpP8KFM",
+         authDomain: "registroocularuso.firebaseapp.com",
+         databaseURL: "https://registroocularuso-default-rtdb.firebaseio.com",
+         projectId: "registroocularuso",
+         storageBucket: "registroocularuso.appspot.com",
+         messagingSenderId: "230219267012",
+         appId: "1:230219267012:web:7b8989887687bc16c78291",
+         measurementId: "G-2FVK8VQHN4"
+      };
+
+      // Inicializar Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const database = getDatabase(app);
+
+      // Array de gazeevents (ejemplo)
+      const gazeevents = [
+         { id: 1, event: "event1algo", timestamp: "2024-07-01T12:00:00Z" },
+         { id: 909, event: "event2", timestamp: "2024-07-01T12:05:00Z" },
+         // Agrega más eventos según sea necesario
+      ];
+
+      // Función para insertar el array en Firebase
+      function insertArray() {
+         const dbRef = ref(database, 'gazeevents');
+         set(dbRef, gazeevents)
+            .then(() => {
+               console.log("Array insertado correctamente.");
+            })
+            .catch((error) => {
+               console.error("Error al insertar el array: ", error);
+            });
+      }
+
+      // Asignar el evento click al botón
+      document.getElementById('insertButton').addEventListener('click', insertArray);
+   </script>
+
+   <button id="insertButton">Insertar Array</button>
+
 
    <button onclick="redirectToRevision()">Ir a la página de revisión</button>
 
