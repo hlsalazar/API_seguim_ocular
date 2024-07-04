@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "firebase": "^10.12.3",
     "solid-js": "^1.8.17"
   }
 }
