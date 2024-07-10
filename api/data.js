@@ -20,7 +20,7 @@ const db = getDatabase(app);
 export default async (req, res) => {
   try {
     const dbRef = ref(db);
-    const snapshot = await get(child(dbRef, '/'));
+    const snapshot = await get(child(dbRef, 'arrayGuardar'));
     if (snapshot.exists()) {
       res.status(200).json(snapshot.val());
     } else {
