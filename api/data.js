@@ -1,6 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, get } from "firebase/database";
-import { getAnalytics } from "firebase/analytics";
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, get, child } from 'firebase/database';
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -14,22 +13,20 @@ const firebaseConfig = {
   measurementId: "G-2FVK8VQHN4"
 };
 
-// Inicializa Firebase
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const db = getDatabase(app);
 
 export default async (req, res) => {
-  if (req.method === 'GET') {
-    try {
-      const snapshot = await get(ref(db, 'arrayGuardar')); // Cambia este camino por el de tus datos en la base de datos
-      const data = snapshot.val();
-      res.status(200).json(data);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+  try {
+    const dbRef = ref(db);
+    const snapshot = await get(child(dbRef, '/'));
+    if (snapshot.exists()) {
+      res.status(200).json(snapshot.val());
+    } else {
+      res.status(404).send('No data available');
     }
-  } else {
-    res.setHeader('Allow', ['GET']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 };
