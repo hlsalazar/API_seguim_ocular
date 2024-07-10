@@ -1,20 +1,18 @@
-const fs = require('fs');
-const path = require('path');
+import { ref, get } from 'firebase/database';
+import { db } from '../firebaseConfig.js';
 
-module.exports = (req, res) => {
-  const filePath = path.join(__dirname, '..', 'data', 'data.json');
-
-  fs.readFile(filePath, 'utf8', (err, data) => {
-    if (err) {
-      res.status(500).json({ error: 'Failed to read data file' });
-      return;
-    }
-
+export default async function handler(req, res) {
+  if (req.method === 'GET') {
     try {
-      const jsonData = JSON.parse(data);
-      res.status(200).json(jsonData);
-    } catch (parseErr) {
-      res.status(500).json({ error: 'Failed to parse data file' });
+      const dataRef = ref(db, 'path/to/your/data');
+      const snapshot = await get(dataRef);
+      const data = snapshot.val();
+      res.status(200).json(data);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-  });
-};
+  } else {
+    res.setHeader('Allow', ['GET']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+}
